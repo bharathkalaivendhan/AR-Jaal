@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">AR Jaal</string>
+    <string name="title_activity_details">DetailsActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_buy">BuyActivity</string>
+    <string name="title_activity_order_status">OrderStatus</string>
+    <string name="title_activity_billing_details">BillingDetails</string>
+
+</resources>

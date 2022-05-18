@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "650846603505",
+    "project_id": "ar-jaal",
+    "storage_bucket": "ar-jaal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650846603505:android:4af1caf17fcc2fa20e8150",
+        "android_client_info": {
+          "package_name": "com.bk.arjaal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "650846603505-s02l4835eujpnfkekt5957ripm4ruci6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1uWRUr9IICzHocaAILX8ZjiV8hcNGGO8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "650846603505-s02l4835eujpnfkekt5957ripm4ruci6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
