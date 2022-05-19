@@ -22,7 +22,7 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.launch
 
 
-private var TIME_OUT:Long = 4000
+private var TIME_OUT:Long = 5000
 
 val necklacesList : MutableList<Jewellery> = mutableListOf()
 val banglesList : MutableList<Jewellery> = mutableListOf()
@@ -113,21 +113,21 @@ class SplashActivity : ComponentActivity() {
     private fun loadSplashScreen(user: FirebaseUser?) {
 
         Handler().postDelayed({
-                if(user != null ) {
+            if(user != null ) {
 
 
-                    Log.d("UNKNOWN","inside load splashscreen")
-                    // Launching MainActivity
-                    val mainintent = Intent(this, MainActivity::class.java)
-                    this.startActivity(mainintent)
-                    finish()
-                } else{
-
-                    Log.d("UNKNOWN","inside load splashscreen")
-                    val loginintent = Intent(this, LoginActivity::class.java)
-                    this.startActivity(loginintent)
-                    finish()
-                }
+                Log.d("UNKNOWN","inside load splashscreen")
+                // Launching MainActivity
+                val mainintent = Intent(this, MainActivity::class.java)
+                this.startActivity(mainintent)
+                finish()
+            } else{
+//TODO change this MainAcitvity to LoginActivity Class to check firebase
+                Log.d("UNKNOWN","inside load splashscreen")
+                val loginintent = Intent(this, MainActivity::class.java)
+                this.startActivity(loginintent)
+                finish()
+            }
         }, TIME_OUT)
     }
     companion object {

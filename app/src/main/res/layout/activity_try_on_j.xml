@@ -9,21 +9,38 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/arFragment"
         android:name="com.google.ar.sceneform.ux.ArFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="26dp"
-        tools:layout_editor_absoluteY="-16dp" />
+        android:layout_width="368dp"
+        android:layout_height="661dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnScan"
+        app:layout_constraintCircleRadius="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTryInfo"
+        app:layout_constraintVertical_bias="0.8"
+        tools:layout="@layout/sceneform_ux_fragment_layout" />
 
     <Button
         android:id="@+id/btnScan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#950B0B"
         android:text="Scan"
-        android:textColor="#40C4FF"
-        app:iconTint="#C34747"
+        android:textColor="#DCD294"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTryInfo"
+        android:layout_width="381dp"
+        android:layout_height="71dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-smallcaps"
+        android:text="Try on the jewel, Get closer for better Results. \n When ready hit the Scan button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.475"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

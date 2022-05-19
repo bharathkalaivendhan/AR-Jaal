@@ -97,6 +97,8 @@ dependencies {
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.4.2'
 
+    //Accompanist
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.23.1"
 
     //ARcore
     implementation 'com.google.ar:core:1.30.0'

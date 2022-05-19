@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -45,6 +46,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
 import com.bk.arjaal.ui.theme.ui.theme.Ljust1
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
@@ -80,8 +82,22 @@ class MainActivity : ComponentActivity() {
             val jewellerylist = viewModel.jewelleriesList
 
             ARJaalTheme {
+                // Remember a SystemUiController
+                val systemUiController = rememberSystemUiController()
+                val useDarkIcons = MaterialTheme.colors.isLight
 
-                    MainScreen(jewellerylist,viewModel,this, JewelleryCategoryList)
+                SideEffect {
+                    // Update all of the system bar colors to be transparent, and use
+                    // dark icons if we're in light theme
+                    systemUiController.setSystemBarsColor(
+                        color = Color.Transparent,
+                        darkIcons = useDarkIcons
+                    )
+
+
+                }
+
+                MainScreen(jewellerylist,viewModel,this, JewelleryCategoryList)
             }
 
         }
@@ -113,21 +129,24 @@ fun MainScreen(
     Scaffold(
         topBar = {
             //TopBar()
-                 },
+        },
         bottomBar = {
             BottomNavigationBar(items = items,
                 navController = navController,
                 onItemClick = { navController.navigate(it.route)}) }
     ) {
-        Box {
-        Navigation(
-            jewellerylist,
-            navController,
-            viewModel,
-            mainActivity,
-            JewelleryCategoryList,
-        )
-    }}
+
+            innerPadding ->
+        // Apply the padding globally to the whole BottomNavScreensController
+        Box(modifier = Modifier.padding(innerPadding)) {
+            Navigation(
+                jewellerylist,
+                navController,
+                viewModel,
+                mainActivity,
+                JewelleryCategoryList,
+            )
+        }}
 }
 
 
@@ -176,7 +195,7 @@ fun BottomNavigationBar(
 
 @ExperimentalMaterialApi
 @Composable
- fun Navigation(
+fun Navigation(
     jewellerylist: MutableList<Jewellery>,
     navController: NavHostController,
     viewModel: JewelleryViewModel,
@@ -187,12 +206,12 @@ fun BottomNavigationBar(
     NavHost( navController = navController,startDestination = "home") {
         composable("home") {
 
-                HomeScreen(
-                    jewellerylist,
-                    viewModel = viewModel,
-                    mainActivity = mainActivity,
-                    JewelleryCategoryList = JewelleryCategoryList
-                )
+            HomeScreen(
+                jewellerylist,
+                viewModel = viewModel,
+                mainActivity = mainActivity,
+                JewelleryCategoryList = JewelleryCategoryList
+            )
 
         }
         composable("account") {
@@ -244,12 +263,9 @@ fun AccountScreen(
                         })
 
      */
-
-
-
     //Log.d("ORDERC",numOfOrder.toString())
 
-        Column(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background),
@@ -261,13 +277,13 @@ fun AccountScreen(
         Spacer(modifier = Modifier.size(20.dp))
         Text(text = "Email : "+ auth.currentUser?.email.toString(),fontSize = 20.sp)
         Spacer(modifier = Modifier.size(20.dp))
-            /*
-            Text(text = "Total Number Of Orders : $numOfOrder",fontSize = 20.sp)
-            Spacer(modifier = Modifier.size(20.dp))
-            Text(text = "Total Amount Purchased : $TotalAmount",fontSize = 20.sp)
-            Spacer(modifier = Modifier.size(20.dp))
+        /*
+        Text(text = "Total Number Of Orders : $numOfOrder",fontSize = 20.sp)
+        Spacer(modifier = Modifier.size(20.dp))
+        Text(text = "Total Amount Purchased : $TotalAmount",fontSize = 20.sp)
+        Spacer(modifier = Modifier.size(20.dp))
 
-             */
+         */
         Button(onClick = { signOut(mainActivity = mainActivity)},shape = MaterialTheme.shapes.medium) {
             Column(verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally) {
@@ -324,18 +340,26 @@ fun HomeScreen(
 @Composable
 fun CategoryCard(Category: String, viewModel: JewelleryViewModel)
 {
+    var isSelected = false
     Card(
         modifier = Modifier
-            .padding(horizontal = 5.dp, vertical = 5.dp)
+            .padding(start = 10.dp, bottom = 4.dp, end = 5.dp, top = 12.dp)
             .width(100.dp)
             .height(50.dp)
             .clickable {
                 Log.d("CHECKING", "inside category card click")
                 viewModel.onchangeList(Category)
+                isSelected = true
             },
         elevation = 3.dp,
-        backgroundColor = MaterialTheme.colors.primaryVariant,
-        shape = MaterialTheme.shapes.large
+        backgroundColor =
+        if(isSelected)
+        { MaterialTheme.colors.surface }
+        else{
+            MaterialTheme.colors.primaryVariant
+        }
+        ,
+        shape = MaterialTheme.shapes.small
 
     )
     {
@@ -361,8 +385,9 @@ fun JewelleryCardListView(
 )
 {
     LazyColumn(
-        modifier = Modifier
-        //contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp)
+        modifier = Modifier,
+
+        contentPadding = PaddingValues(horizontal = 8.dp)
     ){
 
         itemsIndexed(
@@ -393,15 +418,14 @@ fun JewelleryCard(
 
     Card(
         modifier = Modifier
-            .padding(horizontal = 12.dp, vertical = 4.dp)
-            .fillMaxWidth(),
-        elevation = 10.dp,
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+        ,
         backgroundColor = MaterialTheme.colors.surface,
-        shape = RoundedCornerShape(corner = CornerSize(12.dp)),
+        shape = RoundedCornerShape(corner = CornerSize(6.dp)),
         onClick = {takeToNextActivity(mainActivity,context,jewellery)}
     ) {
 
-        Row {
+        Column {
 
             Image(
                 painter = painter,
@@ -409,7 +433,7 @@ fun JewelleryCard(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     //.padding(8.dp)
-                    .fillMaxWidth(0.50f)
+                    .fillMaxWidth(1f)
                     .height(200.dp)
                 //.clip(RoundedCornerShape(corner = CornerSize(10.dp)))
             )
@@ -418,18 +442,24 @@ fun JewelleryCard(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
-                    .align(Alignment.CenterVertically)
+                    .align(Alignment.CenterHorizontally)
             ) {
-                Text(
-                    text = jewellery.Name,
-                    style = MaterialTheme.typography.h5,
-                    color = colorResource(id = R.color.black)
 
-                )
                 Text(
                     text = "Rs."+jewellery.Price.toString(),
                     style = MaterialTheme.typography.h6,
                     color = colorResource(id = R.color.black)
+                    ,
+                    fontWeight = FontWeight.ExtraBold
+                    , modifier = Modifier.padding(bottom=12.dp)
+
+                )
+                Text(
+                    text = jewellery.Name,
+                    style = MaterialTheme.typography.h5,
+                    color = colorResource(id = R.color.black)
+                    ,
+                    fontWeight = FontWeight.Medium
                 )
             }
 

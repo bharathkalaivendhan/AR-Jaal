@@ -6,6 +6,7 @@ import PoseDetector
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.PointF
 import android.media.Image
 import android.net.Uri
 import android.opengl.GLSurfaceView
@@ -26,6 +27,7 @@ import com.google.ar.sceneform.rendering.ModelRenderable
 import com.google.ar.sceneform.ux.ArFragment
 import com.google.ar.sceneform.ux.TransformableNode
 import com.google.mlkit.vision.pose.PoseLandmark
+import com.gorisse.thomas.sceneform.Position
 import com.gorisse.thomas.sceneform.scene.await
 import kotlinx.coroutines.*
 import java.util.*
@@ -34,6 +36,8 @@ const val FRONT = "YOOGUYS"
 lateinit var session : Session
 var anchorToLoadJewel : Anchor? = null
 lateinit var frame : Frame
+lateinit var leftPose : PointF
+lateinit var rightPose : PointF
 
 
 val viewMatrix = FloatArray(16)
@@ -58,29 +62,29 @@ class TryOnActivityJ : AppCompatActivity(){
         // Set a camera configuration that uses the front-facing camera.
         arFragment = supportFragmentManager.findFragmentById(R.id.arFragment) as ArFragment
         btnScan = findViewById(R.id.btnScan)
-        fun tryCreateSession() : Session? {
+        fun tryCreateSession(): Session? {
             return try {
+
                 Session(applicationContext)
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 null
             }
         }
         session = tryCreateSession() ?: return
 
-        try{
+        try {
             session.resume()
-        }
-        catch (e:Exception) {
+        } catch (e: Exception) {
         }
 
 
         btnScan.setOnClickListener {
+            Log.d(FRONT,"Pressed")
             arFragment.arSceneView.scene.addOnUpdateListener {
 
                 arFragment.instructionsController.isEnabled = false
-                arFragment.arSceneView.setMaxFramesPerSeconds(45)
-                Log.d(FRONT,"Pressess")
+                arFragment.arSceneView.setMaxFramesPerSeconds(24)
+
                 lifecycleScope .launch {
 
                     delay(5000)
@@ -117,70 +121,77 @@ class TryOnActivityJ : AppCompatActivity(){
 
                         for (pose in poses) {
 
-                           // if(jewelleryInfo.Category == "Ear rings") {
+                            // if(jewelleryInfo.Category == "Ear rings") {
 
-                                if(pose.landmarkType == PoseLandmark.LEFT_EAR) {
-                                    val cpuCoordinates = floatArrayOf(pose.position.x, pose.position.y)
-                                    val viewCoordinates = FloatArray(2)
-                                    val currentFrame = arFragment.arSceneView.arFrame
-                                    currentFrame?.transformCoordinates2d(
-                                        Coordinates2d.IMAGE_PIXELS,
-                                        cpuCoordinates,
-                                        Coordinates2d.VIEW,
-                                        viewCoordinates
-                                    )
-                                    detachModel()
-                                    val hits = currentFrame?.hitTest(viewCoordinates[0], viewCoordinates[1])
-                                    if (hits != null) {
-                                        for (hit in hits) {
-                                            try {
 
-                                                loadJewel(
-                                                    jewelleryInfo,
-                                                    applicationContext,
-                                                    hit.createAnchor(), arFragment
-                                                )
-                                                Log.d(FRONT, "HITS CREATE ANCHOR DONE")
-                                            }
-                                            catch (e:Exception){
-                                                Log.d(FRONT, e.toString())
-                                            }
+                            if(pose.landmarkType == PoseLandmark.LEFT_EAR) {
+                                leftPose = pose.position
+                                val cpuCoordinates = floatArrayOf(pose.position.x+4f, pose.position.y)
+                                val viewCoordinates = FloatArray(2)
+                                val currentFrame = arFragment.arSceneView.arFrame
+                                currentFrame?.transformCoordinates2d(
+                                    Coordinates2d.IMAGE_PIXELS,
+                                    cpuCoordinates,
+                                    Coordinates2d.VIEW,
+                                    viewCoordinates
+                                )
+                                detachModel()
+                                val hits = currentFrame?.hitTest(viewCoordinates[0], viewCoordinates[1])
+                                if (hits != null) {
+                                    for (hit in hits) {
+                                        try {
 
+                                            loadJewel(
+                                                jewelleryInfo,
+                                                applicationContext,
+                                                hit.createAnchor(), arFragment
+                                            )
+                                            Log.d(FRONT, "HITS CREATE ANCHOR DONE")
+                                        }
+                                        catch (e:Exception){
+                                            Log.d(FRONT, e.toString())
+                                        }
+
+                                    }
+                                }
+                            }
+
+                            if (pose.landmarkType == PoseLandmark.RIGHT_EAR) {
+                                rightPose = pose.position
+                                val cpuCoordinates =
+                                    floatArrayOf(pose.position.x, pose.position.y)
+                                val viewCoordinates = FloatArray(2)
+                                val currentFrame = arFragment.arSceneView.arFrame
+                                currentFrame?.transformCoordinates2d(
+                                    Coordinates2d.IMAGE_PIXELS,
+                                    cpuCoordinates,
+                                    Coordinates2d.VIEW,
+                                    viewCoordinates
+                                )
+                                //detachModel()
+                                val hits = currentFrame?.hitTest(
+                                    viewCoordinates[0],
+                                    viewCoordinates[1]
+                                )
+                                if (hits != null) {
+                                    for (hit in hits) {
+
+                                        try {
+                                            loadJewel(
+                                                jewelleryInfo,
+                                                applicationContext,
+                                                hit.createAnchor(), arFragment
+                                            )
+                                            Log.d(FRONT, "HITS CREATE ANCHOR DONE")
+                                        } catch (e: Exception) {
+                                            Log.d(FRONT, e.toString())
                                         }
                                     }
                                 }
-                                if (pose.landmarkType == PoseLandmark.RIGHT_EAR) {
-                                    val cpuCoordinates =
-                                        floatArrayOf(pose.position.x, pose.position.y)
-                                    val viewCoordinates = FloatArray(2)
-                                    val currentFrame = arFragment.arSceneView.arFrame
-                                    currentFrame?.transformCoordinates2d(
-                                        Coordinates2d.IMAGE_PIXELS,
-                                        cpuCoordinates,
-                                        Coordinates2d.VIEW,
-                                        viewCoordinates
-                                    )
-                                    val hits = currentFrame?.hitTest(
-                                        viewCoordinates[0],
-                                        viewCoordinates[1]
-                                    )
-                                    if (hits != null) {
-                                        for (hit in hits) {
+                            }
 
-                                            try {
-                                                loadJewel(
-                                                    jewelleryInfo,
-                                                    applicationContext,
-                                                    hit.createAnchor(), arFragment
-                                                )
-                                                Log.d(FRONT, "HITS CREATE ANCHOR DONE")
-                                            } catch (e: Exception) {
-                                                Log.d(FRONT, e.toString())
-                                            }
-                                        }
-                                    }
-                                }
-                           // }
+
+                            // }
                             /*
                             else if(jewelleryInfo.Category == "Necklaces")
                             {
@@ -289,17 +300,17 @@ suspend fun loadJewel(jewelleryInfo  : Jewellery,context: Context, anchor: Ancho
 
 
     val model =
-      //  if(jewelleryInfo.Category == "Ear rings") {
+        //  if(jewelleryInfo.Category == "Ear rings") {
 
-            ModelRenderable.builder()
-                .setSource(
-                    context,
-                    Uri.parse("candybowearrings.glb")
-                )
-                .setIsFilamentGltf(true)
-                .await()
+        ModelRenderable.builder()
+            .setSource(
+                context,
+                Uri.parse("candybowearrings.glb")
+            )
+            .setIsFilamentGltf(true)
+            .await()
 
-      //  }
+    //  }
     /*
     else if(jewelleryInfo.Category == "Necklaces"){
 
@@ -324,8 +335,8 @@ suspend fun loadJewel(jewelleryInfo  : Jewellery,context: Context, anchor: Ancho
                 .await()
         }*/
     //else{
-        null
-      //  }
+    null
+    //  }
 
     arFragment.arSceneView.scene.addChild(AnchorNode(anchor).apply {
         // Create the transformable model and add it to the anchor

@@ -15,9 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,14 +42,14 @@ class BuyActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val myIntent = intent
-       jewelleryInfo = myIntent.getSerializableExtra("jewelleryInfo") as Jewellery
+        jewelleryInfo = myIntent.getSerializableExtra("jewelleryInfo") as Jewellery
         name = myIntent.getStringExtra("name") as String
         phone = myIntent.getStringExtra("phone") as String
         address = myIntent.getStringExtra("address") as String
         setContent {
             ARJaalTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
+                Surface(color = MaterialTheme.colors.surface) {
                     mainLayout(activity = this,jewelleryInfo.Price,jewelleryInfo,phone,address,name)
                 }
             }
@@ -88,6 +91,7 @@ fun mainLayout(
     phone: String,
     address: String,
     name: String
+    ,
 ) {
     val context = LocalContext.current
     Column(modifier = Modifier
@@ -96,7 +100,15 @@ fun mainLayout(
     {
         val painter = rememberImagePainter(data = jewelleryInfo.ImageURL)
         Log.d("CHECKING",jewelleryInfo.ImageURL)
-
+        Text(
+            text = "Checkout Process", modifier = Modifier
+                .requiredWidth(400.dp)
+                .requiredHeight(50.dp)
+                .padding(start= 16.dp,top=12.dp,bottom=10.dp),
+            fontSize = 25.sp,
+            textAlign = TextAlign.Justify,
+            fontWeight = FontWeight.Black
+        )
         Image(
             painter = painter,
             contentDescription = "jewelly image",
@@ -104,38 +116,53 @@ fun mainLayout(
             modifier = Modifier
                 .padding(horizontal = 20.dp, vertical = 20.dp)
                 .clip(MaterialTheme.shapes.large)
+                .shadow(4.dp)
+        )
+
+        Text(
+            text = "Total order price Rs.$amount",
+            modifier = Modifier
+                .padding(12.dp),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.ExtraBold
+            //fontFamily = FontFamily.Cursive
         )
         Text(
-            text = "Payment Process", modifier = Modifier
-                .requiredWidth(400.dp)
-                .requiredHeight(50.dp)
-                .padding(10.dp),
-            fontSize = 25.sp,
-            textAlign = TextAlign.Center,
+            text = "Hi $name !!" +
+                    "\nThanks for choosing us",
+            modifier = Modifier
+                .padding(12.dp),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+            //fontFamily = FontFamily.Cursive
         )
         Text(
-            text = "Amount : Rs."+amount.toString(),
+            text = "The order will be deliverd at \n${address}" +
+                    "\nOnce you complete the payment process, the order will be confirmed." ,
             modifier = Modifier
                 .padding(10.dp),
-            fontSize = 20.sp
-            //fontFamily = FontFamily.Cursive
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Black
+            ,fontFamily = FontFamily.SansSerif
         )
 
         Button(onClick = {
-          payWithGPay(amount = amount.toString().toInt(), activity = activity,phone,name,address)
-        }) {
+            payWithGPay(amount = amount.toString().toInt(), activity = activity,phone,name,address)
+        },
+            modifier = Modifier.padding(10.dp)
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(painter = painterResource(id = R.drawable.ic_google), contentDescription = "Google Logo" , Modifier.size(35.dp))
+                Image(painter = painterResource(id = R.drawable.ic_google),
+                    contentDescription = "Google Logo" , Modifier.size(35.dp))
 
                 Text(
                     text = "Proceed With Google Pay",
                     modifier = Modifier
                         //.requiredWidth()
-                        .padding(10.dp),
-                    color = Color.Black
-                )
+                        .padding(12.dp),
+                    color = Color.Yellow                )
             }
         }
     }

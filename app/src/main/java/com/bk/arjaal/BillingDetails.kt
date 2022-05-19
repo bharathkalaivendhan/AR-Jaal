@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.SemanticsProperties.ImeAction
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bk.arjaal.ui.theme.ARJaalTheme
@@ -69,7 +70,10 @@ fun BillingScreen(jewelleryInfo: Jewellery) {
         modifier = Modifier.fillMaxSize()
     ) {
 
-        Text(text = "Billing Details", fontSize = 20.sp)
+        Text(text = "Billing Details",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Black
+            , modifier = Modifier.padding(20.dp))
         Spacer(modifier = Modifier.size(12.dp))
         TextField(
             value = name.value,
@@ -93,6 +97,7 @@ fun BillingScreen(jewelleryInfo: Jewellery) {
             keyboardOptions = KeyboardOptions(imeAction = androidx.compose.ui.text.input.ImeAction.Done),
             keyboardActions = KeyboardActions(
                 onDone = { keyboardController?.hide() })
+            , modifier = Modifier.requiredSize(300.dp).padding(10.dp)
         )
         Spacer(modifier = Modifier.size(12.dp))
         TextField(
