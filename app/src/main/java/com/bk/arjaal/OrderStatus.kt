@@ -94,7 +94,7 @@ fun OrderStatusScreen(
       var text ="Success"
 
        val  image :Painter = if(status == "success") {
-             text = "Success!!! Product Will Be Deliver Soon"
+             text = "Success!!! Product Will Be Delivered Soon"
            painterResource(id = R.drawable.success)
         }
         else{

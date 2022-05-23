@@ -17,10 +17,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,7 +61,7 @@ val JewelleryCategoryList = mutableListOf<String>(
     "Rings",
     "Bangles"
 )
-
+var favourites = mutableListOf<Jewellery>()
 private lateinit var auth : FirebaseAuth
 
 class MainActivity : ComponentActivity() {
@@ -118,6 +115,11 @@ fun MainScreen(
             name = "Home",
             route = "home",
             icon = Icons.Default.Home
+        ),
+        NavigationItem(
+            name = "Favourite",
+            route = "favourite",
+            icon = Icons.Default.Favorite
         ),
         NavigationItem(
             name = "Account",
@@ -205,7 +207,6 @@ fun Navigation(
 {
     NavHost( navController = navController,startDestination = "home") {
         composable("home") {
-
             HomeScreen(
                 jewellerylist,
                 viewModel = viewModel,
@@ -214,15 +215,20 @@ fun Navigation(
             )
 
         }
+        composable("favourite") {
+            FavouriteScreen(
+                jewellerylist,
+                viewModel = viewModel,
+                mainActivity = mainActivity,
+            )
+        }
         composable("account") {
-
             AccountScreen(
                 jewellerylist,
                 viewModel = viewModel,
                 mainActivity = mainActivity,
                 JewelleryCategoryList = JewelleryCategoryList
             )
-
         }
     }
 }
@@ -237,34 +243,6 @@ fun AccountScreen(
 ) {
 
     auth = FirebaseAuth.getInstance()
-
-    /*
-    val rootRef = FirebaseDatabase.getInstance().reference
-    val orderRef = rootRef.child("users").child(auth.currentUser?.uid.toString()).child("orders")
-
-     orderRef.addValueEventListener(object : ValueEventListener {
-
-                            override fun onDataChange(snapshot: DataSnapshot) {
-                                    snapshot.children.forEach {
-                                        val jewel = it.getValue(Jewellery::class.java)
-                                        if (jewel != null) {
-                                             numOfOrder++
-                                            TotalAmount += jewel.Price.toInt()
-
-                                            Log.d("ORDER",jewel.Price.toString())
-                                    }
-                                }
-                            }
-
-                            override fun onCancelled(error: DatabaseError) {
-                                Log.d("CHECKING", error.message)
-                            }
-
-                        })
-
-     */
-    //Log.d("ORDERC",numOfOrder.toString())
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -282,7 +260,6 @@ fun AccountScreen(
         Spacer(modifier = Modifier.size(20.dp))
         Text(text = "Total Amount Purchased : $TotalAmount",fontSize = 20.sp)
         Spacer(modifier = Modifier.size(20.dp))
-
          */
         Button(onClick = { signOut(mainActivity = mainActivity)},shape = MaterialTheme.shapes.medium) {
             Column(verticalArrangement = Arrangement.Center,
@@ -308,6 +285,108 @@ fun signOut(mainActivity: MainActivity) {
         mainActivity.startActivity(intent)
     }
 }
+
+@ExperimentalMaterialApi
+@Composable
+fun FavouriteScreen(
+    jewellerylist: MutableList<Jewellery>,
+    viewModel: JewelleryViewModel,
+    mainActivity: MainActivity
+)
+{
+    FavouriteCardListView(jewellerylist = jewellerylist, viewModel = viewModel, mainActivity = mainActivity)
+}
+
+@ExperimentalMaterialApi
+@Composable
+fun FavouriteCardListView(
+    jewellerylist: MutableList<Jewellery>,
+    viewModel: JewelleryViewModel,
+    mainActivity: MainActivity
+)
+{
+    LazyColumn(
+        modifier = Modifier,
+
+        contentPadding = PaddingValues(horizontal = 8.dp)
+    ){
+
+        itemsIndexed(
+            items = favourites,
+            itemContent = { index, item ->
+                if(item.Name!="") {
+                    FavouriteCard(
+                        jewellery = item,
+                        viewModel = viewModel,
+                        mainActivity = mainActivity
+                    )
+                }
+            }
+        )
+
+    }
+}
+
+@ExperimentalMaterialApi
+@Composable
+fun FavouriteCard(
+    jewellery: Jewellery,
+    viewModel: JewelleryViewModel,
+    mainActivity: MainActivity
+)
+{
+    val context = LocalContext.current
+
+    val painter = rememberImagePainter(data = jewellery.ImageURL)
+
+    Card(
+        modifier = Modifier
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+        ,
+        backgroundColor = MaterialTheme.colors.surface,
+        shape = RoundedCornerShape(corner = CornerSize(6.dp)),
+        onClick = {takeToNextActivity(mainActivity,context,jewellery)}
+    ) {
+
+        Column {
+
+            Image(
+                painter = painter,
+                contentDescription = "jewelly image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    //.padding(8.dp)
+                    .fillMaxWidth(1f)
+                    .height(200.dp)
+                //.clip(RoundedCornerShape(corner = CornerSize(10.dp)))
+            )
+
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .align(Alignment.CenterHorizontally)
+                ) {
+
+                    Text(
+                        text = "Rs." + jewellery.Price.toString(),
+                        style = MaterialTheme.typography.h6,
+                        color = colorResource(id = R.color.black),
+                        fontWeight = FontWeight.ExtraBold,
+                        modifier = Modifier.padding(bottom = 12.dp)
+
+                    )
+                    Text(
+                        text = jewellery.Name,
+                        style = MaterialTheme.typography.h5,
+                        color = colorResource(id = R.color.black),
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+        }
+    }
+}
+
 
 @ExperimentalMaterialApi
 @Composable

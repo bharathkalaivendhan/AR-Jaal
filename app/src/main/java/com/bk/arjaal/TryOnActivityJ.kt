@@ -124,7 +124,7 @@ class TryOnActivityJ : AppCompatActivity(){
                             // if(jewelleryInfo.Category == "Ear rings") {
 
 
-                            if(pose.landmarkType == PoseLandmark.LEFT_EAR) {
+                            if(pose.landmarkType == PoseLandmark.RIGHT_SHOULDER) {
                                 leftPose = pose.position
                                 val cpuCoordinates = floatArrayOf(pose.position.x+4f, pose.position.y)
                                 val viewCoordinates = FloatArray(2)
@@ -156,39 +156,39 @@ class TryOnActivityJ : AppCompatActivity(){
                                 }
                             }
 
-                            if (pose.landmarkType == PoseLandmark.RIGHT_EAR) {
-                                rightPose = pose.position
-                                val cpuCoordinates =
-                                    floatArrayOf(pose.position.x, pose.position.y)
-                                val viewCoordinates = FloatArray(2)
-                                val currentFrame = arFragment.arSceneView.arFrame
-                                currentFrame?.transformCoordinates2d(
-                                    Coordinates2d.IMAGE_PIXELS,
-                                    cpuCoordinates,
-                                    Coordinates2d.VIEW,
-                                    viewCoordinates
-                                )
-                                //detachModel()
-                                val hits = currentFrame?.hitTest(
-                                    viewCoordinates[0],
-                                    viewCoordinates[1]
-                                )
-                                if (hits != null) {
-                                    for (hit in hits) {
-
-                                        try {
-                                            loadJewel(
-                                                jewelleryInfo,
-                                                applicationContext,
-                                                hit.createAnchor(), arFragment
-                                            )
-                                            Log.d(FRONT, "HITS CREATE ANCHOR DONE")
-                                        } catch (e: Exception) {
-                                            Log.d(FRONT, e.toString())
-                                        }
-                                    }
-                                }
-                            }
+//                            if (pose.landmarkType == PoseLandmark.RIGHT_EAR) {
+//                                rightPose = pose.position
+//                                val cpuCoordinates =
+//                                    floatArrayOf(pose.position.x, pose.position.y)
+//                                val viewCoordinates = FloatArray(2)
+//                                val currentFrame = arFragment.arSceneView.arFrame
+//                                currentFrame?.transformCoordinates2d(
+//                                    Coordinates2d.IMAGE_PIXELS,
+//                                    cpuCoordinates,
+//                                    Coordinates2d.VIEW,
+//                                    viewCoordinates
+//                                )
+//                                //detachModel()
+//                                val hits = currentFrame?.hitTest(
+//                                    viewCoordinates[0],
+//                                    viewCoordinates[1]
+//                                )
+//                                if (hits != null) {
+//                                    for (hit in hits) {
+//
+//                                        try {
+//                                            loadJewel(
+//                                                jewelleryInfo,
+//                                                applicationContext,
+//                                                hit.createAnchor(), arFragment
+//                                            )
+//                                            Log.d(FRONT, "HITS CREATE ANCHOR DONE")
+//                                        } catch (e: Exception) {
+//                                            Log.d(FRONT, e.toString())
+//                                        }
+//                                    }
+//                                }
+//                            }
 
 
                             // }
@@ -305,7 +305,7 @@ suspend fun loadJewel(jewelleryInfo  : Jewellery,context: Context, anchor: Ancho
         ModelRenderable.builder()
             .setSource(
                 context,
-                Uri.parse("candybowearrings.glb")
+                Uri.parse("Necklacecut.glb")
             )
             .setIsFilamentGltf(true)
             .await()

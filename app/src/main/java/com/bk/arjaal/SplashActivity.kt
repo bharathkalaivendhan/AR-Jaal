@@ -10,7 +10,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.bk.arjaal.ui.theme.ARJaalTheme
 import com.google.firebase.auth.FirebaseAuth
@@ -31,6 +30,8 @@ val ringsList : MutableList<Jewellery> = mutableListOf()
 
 var mainList : MutableList<Jewellery> = mutableListOf()
 
+var favList : MutableList<Jewellery> = mutableListOf()
+
 private lateinit var auth : FirebaseAuth
 
 @SuppressLint("CustomSplashScreen")
@@ -43,7 +44,7 @@ class SplashActivity : ComponentActivity() {
         val user = auth.currentUser
 
         val rootRef = FirebaseDatabase.getInstance().reference
-        val mainref = rootRef.child("jewelleries")//.child("bangles")
+        val mainref = rootRef.child("jewelleries")
 
         lifecycleScope.launch {
 
@@ -98,7 +99,6 @@ class SplashActivity : ComponentActivity() {
         val viewModel = JewelleryViewModel()
         val jewelleriesList = viewModel.jewelleriesList
 
-        Log.d("UNKNOWN","before load splashscreen")
         loadSplashScreen(user)
         setContent {
             ARJaalTheme {
@@ -124,7 +124,7 @@ class SplashActivity : ComponentActivity() {
             } else{
 //TODO change this MainAcitvity to LoginActivity Class to check firebase
                 Log.d("UNKNOWN","inside load splashscreen")
-                val loginintent = Intent(this, MainActivity::class.java)
+                val loginintent = Intent(this, LoginActivity::class.java)
                 this.startActivity(loginintent)
                 finish()
             }

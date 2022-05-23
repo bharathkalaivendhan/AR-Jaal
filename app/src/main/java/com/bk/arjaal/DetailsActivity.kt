@@ -15,6 +15,8 @@ import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.bk.arjaal.ui.theme.ARJaalTheme
+import com.bk.arjaal.ui.theme.ui.theme.LPrimary
 import com.bk.arjaal.ui.theme.ui.theme.Ljust1
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -45,21 +48,6 @@ class DetailsActivity : ComponentActivity() {
         val jewelleryInfo = myIntent.getSerializableExtra("jewelleryInfo") as Jewellery
 
         val viewModel = JewelleryViewModel()
-
-        /*
-        val auth = FirebaseAuth.getInstance()
-        val user = auth.currentUser
-        val rootRef = FirebaseDatabase.getInstance().reference
-
-        val current = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")
-        val dateTime = current.format(formatter)
-
-            val orderRef = rootRef.child("users").child(user?.uid.toString()).child("orders").child(dateTime)
-            orderRef.setValue(jewelleryInfo)
-
-         */
-
 
         super.onCreate(savedInstanceState)
         setContent {
@@ -86,7 +74,23 @@ fun MainView(jewelleryInfo: Jewellery, viewModel: JewelleryViewModel)
 @Composable
 fun BottomSheetScaffoldVeiw(jewelleryInfo: Jewellery, viewModel: JewelleryViewModel) {
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
-    //val scope = rememberCoroutineScope()
+
+    val buttoncolor = remember {
+        mutableStateOf(Color.Black)
+    }
+    val buttonsize = remember {
+        mutableStateOf(20.dp)
+    }
+
+    if (favourites.contains(jewelleryInfo)) {
+            buttoncolor.value = LPrimary
+            buttonsize.value = 30.dp
+        }
+    else {
+        buttoncolor.value = Color.Black
+        buttonsize.value = 20.dp
+    }
+
     BottomSheetScaffold(
         sheetContent = {
             BottomSheetContent(jewelleryInfo,viewModel)
@@ -96,6 +100,28 @@ fun BottomSheetScaffoldVeiw(jewelleryInfo: Jewellery, viewModel: JewelleryViewMo
         sheetBackgroundColor = MaterialTheme.colors.primary,
         sheetPeekHeight = 200.dp,
         modifier = Modifier.fillMaxWidth(),
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                if(!favourites.contains(jewelleryInfo)) {
+                    viewModel.onAddFavouriteList(jewelleryInfo)
+                    buttoncolor.value = LPrimary
+                    buttonsize.value = 30.dp
+                }
+                else {
+                    viewModel.onDeleteFavouriteList(jewellery = jewelleryInfo)
+                    buttoncolor.value = Color.Black
+                    buttonsize.value = 20.dp
+                }},
+                backgroundColor = Ljust1
+                ) {
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "favourite icon",
+                    tint = buttoncolor.value,
+                    modifier = Modifier.size(buttonsize.value)
+                )
+            }
+        }
         // scrimColor = Color.Red,  // Color for the fade background when you open/close the bottom sheet
     ) {
         val painter = rememberImagePainter(data = jewelleryInfo.ImageURL)

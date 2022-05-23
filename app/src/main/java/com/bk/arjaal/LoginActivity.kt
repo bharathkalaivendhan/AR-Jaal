@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bk.arjaal.ui.theme.ARJaalTheme
@@ -74,7 +75,9 @@ class LoginActivity : ComponentActivity() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-                Text(text = "SignIn with Google",color = Color.Black,fontSize = 20.sp)
+                Text(text = "Sign In with Google \n More options coming soon...",color = Color.Black,fontSize = 20.sp,
+                fontWeight = FontWeight.Black
+                )
                 Spacer(modifier = Modifier.size(20.dp))
                 Button(onClick = {
                     signInGoogle()

@@ -2,18 +2,11 @@ package com.bk.arjaal
 
 import android.util.Log
 import androidx.compose.runtime.*
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 
 import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 
 private lateinit var auth : FirebaseAuth
 
@@ -23,6 +16,7 @@ class JewelleryViewModel : ViewModel() {
     val user = auth.currentUser
 
     val rootRef = FirebaseDatabase.getInstance().reference
+    val favouriteRef = rootRef.child("users").child(user?.uid.toString()).child("favourite")
 
     var jewelleriesList by mutableStateOf(mainList)
 
@@ -49,4 +43,19 @@ class JewelleryViewModel : ViewModel() {
         }
     }
 
+    fun onAddFavouriteList(jewellery: Jewellery)
+    {
+if(!favourites.contains(jewellery)) {
+   // _favouriteList.add(jewellery)
+    favourites.add(jewellery)
+
+    favouriteRef.child(jewellery.Name).setValue(jewellery)
+}
+    }
+    fun onDeleteFavouriteList(jewellery: Jewellery)
+    {
+           favourites.remove(jewellery)
+
+            favouriteRef.child(jewellery.Name).removeValue()
+    }
 }
